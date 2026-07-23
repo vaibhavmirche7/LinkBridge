@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Vector fallback for the LinkBridge icon (folder + wifi wireframe).
+     Note: the "LB" wordmark that appears on the real launcher icon is NOT reproduced
+     here because Android VectorDrawable has no text element - that text only exists
+     in the rasterized mipmap-*/ic_launcher_foreground.webp files, which is what
+     actually renders on API 26+ devices and in the About screen. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="192"
+    android:viewportHeight="192">
+    <path
+        android:fillColor="#00E5FF"
+        android:pathData="M96,63a5,5 0,1 1,0 10a5,5 0,1 1,0 -10z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M80,68 A16,16 0,0 1,112 68" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M69,68 A27,27 0,0 1,123 68" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:pathData="M58,68 A38,38 0,0 1,134 68" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3.2"
+        android:pathData="M77,78 L115,78 A5,5 0,0 1,120 83 L120,91 L72,91 L72,83 A5,5 0,0 1,77 78 Z" />
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="3.2"
+        android:pathData="M37,94 L155,94 A13,13 0,0 1,168 107 L168,165 A13,13 0,0 1,155 178 L37,178 A13,13 0,0 1,24 165 L24,107 A13,13 0,0 1,37 94 Z" />
+</vector>

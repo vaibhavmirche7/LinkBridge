@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_qr"
+        android:title="@string/show_qr_code"
+        android:icon="@drawable/ic_qr_code"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_paste"
+        android:title="@string/paste_from_clipboard"
+        android:icon="@drawable/ic_paste"
+        app:iconTint="@color/toolbar_icon_tint_light"
+    app:showAsAction="ifRoom" />
+</menu>

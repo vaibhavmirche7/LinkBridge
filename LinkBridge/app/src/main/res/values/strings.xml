@@ -1,0 +1,194 @@
+<resources>
+    <string name="app_name">LinkBridge</string>
+
+    <string name="waiting_for_network">Waiting for network…</string>
+    <string name="copy_ip_address">Copy IP Address</string>
+    <string name="upload_file_to_shared_folder">Upload File to Shared Folder</string>
+
+    <string name="settings">Settings</string>
+    <string name="action_settings">Action Settings</string>
+
+    <string name="title_activity_settings">Settings</string>
+    <string name="ip_copied_to_clipboard">IP Address copied to clipboard</string>
+
+    <string name="folder_selection_cancelled">Folder selection cancelled.</string>
+    <string name="server_stopped">Server stopped</string>
+
+    <string name="file_server_notification_title">Transfer Server Active</string>
+    <string name="file_server_notification_text">Access files at http://%1$s:%2$d</string>
+    <string name="notification_permission_denied">Notification permission denied</string>
+
+
+    <string name="notification_channel_name">File Server</string>
+    <string name="notification_channel_description">Shows when the Transfer server is running.</string>
+    <string name="no_write_permission">No write permission for the selected folder. Please re-select in settings.</string>
+
+
+    <string name="shared_folder_not_selected">Shared folder not selected.</string>
+    <string name="file_upload_failed">Failed to upload file.</string>
+    <string name="select_shared_folder_prompt">Please select a shared folder in settings.</string>
+    <string name="error_parsing_folder_uri">Error: Could not parse selected folder URI.</string>
+    <string name="file_uploaded">File uploaded: %s</string>
+    <string name="no_files_selected">No files selected.</string>
+    <string name="no_folder_selected">No folder selected.</string>
+
+
+    <string name="text_pasted_to_file">Text pasted to %s</string>
+    <string name="clipboard_empty">Clipboard is empty or does not contain text.</string>
+    <string name="shared_text_saved">Shared text saved as %s</string>
+    <string name="shared_file_saved">Shared file saved: %s</string>
+    <string name="error_saving_shared_content">Error saving shared content.</string>
+    <string name="files_uploaded">%d files uploaded.</string>
+
+    <string name="file_not_found">File not found</string>
+    <string name="error_listing_files">Error listing files</string>
+    <string name="permission_dialog_title">Connection Request</string>
+    <string name="permission_dialog_message">Allow computer at IP %s to access files?</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="transfer_request_notification_title">%1$s wants to send files</string>
+    <string name="transfer_request_dialog_message">%1$s</string>
+
+    <string name="pref_category_security">Security</string>
+    <string name="pref_title_ip_permission">Display Permission Dialog</string>
+    <string name="pref_summary_ip_permission">Ask for permission for new IPs. Valid for 1 hour.</string>
+    <string name="pref_title_password_protect">Web Login Password</string>
+    <string name="pref_summary_password_protect_on">Required to connect: %1$s</string>
+    <string name="pref_dialog_title_set_password">Set Web Login Password</string>
+    <string name="pref_key_ip_permission_enabled" translatable="false">ip_permission_enabled</string>
+    <string name="pref_key_server_password" translatable="false">server_password</string>
+    <string name="pref_key_server_port" translatable="false">server_port</string>
+    <string name="pref_key_signaling_url" translatable="false">signaling_server_url</string>
+    <string name="password_set">Password set. Devices must log in with it to connect.</string>
+    <string name="password_required">Web login requires a password - it can\'t be left empty.</string>
+    <string name="folder_not_accessible_select_again">The previously selected folder is no longer accessible. Please select it again.</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <!--    SETUP-->
+    <string name="setup_title">Welcome to Transfer</string>
+    <string name="setup_description">To get started, please select a folder on your device that will be used for sharing files.</string>
+    <string name="choose_shared_folder">Choose Shared Folder</string>
+    <string name="folder_setup_complete">Folder selected. Starting Transfer app.</string>
+
+    <!--    file list-->
+    <string name="no_files_in_shared_folder">No files here. Upload some!</string>
+    <string name="action_share_file">Share</string>
+    <string name="action_delete_file">Delete</string>
+    <string name="confirm_delete_file_title">Confirm Delete</string>
+    <string name="confirm_delete_file_message">Are you sure you want to delete "%s"? This cannot be undone.</string>
+    <string name="file_deleted_successfully">File "%s" deleted.</string>
+    <string name="file_delete_failed">Failed to delete file "%s".</string>
+    <string name="refreshing_files">Refreshing file list…</string>
+
+
+    <!--    just for accesses-->
+
+    <string name="file_type_icon">File type icon</string>
+    <string name="selection_indicator">Selection indicator</string>
+    <string name="share_files">Share Files</string>
+    <string name="delete_files">Delete Files</string>
+    <string name="selected_items_count">%d selected</string>
+    <string name="action_select_all">Select All</string>
+    <string name="upload_file">Upload File</string>
+    <!--    main UI-->
+    <string name="server_status_placeholder">Server Status</string>
+    <string name="copy_ip_description">Copy IP Address</string>
+    <string name="file_list_description">List of shared files</string>
+
+    <string name="server_running">Server Running</string>
+
+    <string name="server_error_format">Error: %s</string>
+    <string name="permission_request_title">Permission Request</string>
+    <string name="permission_request_message">Allow access from %s?</string>
+    <string name="share_file_error">Could not share file: %s</string>
+    <string name="no_readable_files_share">No readable files selected to share.</string>
+    <string name="share_multiple_files_title">Share %d files</string>
+    <string name="confirm_delete_multiple_title">Delete %d Files?</string>
+    <string name="confirm_delete_multiple_message">Are you sure you want to delete these %d files? This action cannot be undone.</string>
+    <string name="files_deleted_successfully">%d files deleted</string>
+    <string name="failed_to_paste_text">Failed to paste text</string>
+    <string name="no_text_in_clipboard">No text in clipboard to paste</string>
+    <string name="paste_from_clipboard">Paste from Clipboard</string>
+
+    <string name="extra_folder_uri">FOLDER_URI</string>
+    <string name="description">LinkBridge is an open-source app for sharing files across your local network, hotspot, or the internet.</string>
+    <string name="credit">Developed by Vaibhav</string>
+    <string name="github">GitHub</string>
+    <string name="version_name">Version %1$s</string>
+    <string name="app_logo_CD">app logo</string>
+    <string name="about">About</string>
+    <string name="back_cd">back</string>
+    <string name="logs_title">Logs</string>
+    <string name="logs_empty_state">No devices have connected yet. When someone connects, their name and the time will show up here.</string>
+    <string name="copy_to_clipboard">Copy to Clipboard</string>
+    <string name="open_github_issue">Open GitHub Issue</string>
+    <string name="stop_server">Stop Server</string>
+    <string name="start_server">Start Server</string>
+    <string name="server_starting">Server Starting…</string>
+    <string name="ip_address">Ip address</string>
+    <string name="lan_discovery">Discover Devices on LAN</string>
+    <string name="home_option_qr_title">QR Transfer</string>
+    <string name="home_option_qr_subtitle">Scan or show a code, works across networks</string>
+    <string name="home_option_lan_title">LAN / Hotspot Transfer</string>
+    <string name="home_option_lan_subtitle">Same Wi-Fi or hotspot as your other device</string>
+    <string name="home_option_server_title">Server Mode</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="qr_transfer_not_ready_yet">QR transfer is being built next — LAN/Hotspot works today.</string>
+    <string name="history_empty_state">No transfers yet. Sent and received files will show up here.</string>
+    <string name="history_loading">Loading…</string>
+    <string name="history_load_failed">Couldn\'t load history. Tap back and try again.</string>
+    <string name="qr_chooser_hint">Scan a code shown on the other device, or show your own for them to scan.</string>
+    <string name="qr_scan">Scan a code</string>
+    <string name="qr_show">Show my code</string>
+    <string name="qr_find_nearby">Find nearby devices</string>
+    <string name="qr_ble_unsupported">This device doesn\'t support Bluetooth LE.</string>
+    <string name="qr_ble_permission_denied">Bluetooth permission is needed to find nearby devices.</string>
+    <string name="qr_ble_scanning">Looking for nearby LinkBridge devices…</string>
+    <string name="qr_ble_none_found">No nearby LinkBridge devices found. Make sure the other device tapped \"Show my code\".</string>
+    <string name="qr_ble_nearby_title">Nearby devices</string>
+    <string name="qr_confirmation_code_label">Confirmation code (tell the other person)</string>
+    <string name="qr_enter_code_hint">Enter the code shown on the other device</string>
+    <string name="qr_verify_code">Confirm</string>
+    <string name="qr_connected_verified">Connected and verified. You can now send a file directly to the other device.</string>
+    <string name="qr_send_a_file">Send a file</string>
+    <string name="qr_incoming_offer">%1$s wants to send you \"%2$s\" (%3$s)</string>
+    <string name="qr_sending">Sending %1$s…</string>
+    <string name="qr_receiving">Receiving %1$s…</string>
+    <string name="qr_transfer_done">Done</string>
+    <string name="qr_transfer_failed">Transfer failed</string>
+    <string name="qr_status_waiting">Waiting for the other device…</string>
+    <string name="qr_status_paired">Found the other device — connecting…</string>
+    <string name="qr_status_connecting">Connecting…</string>
+    <string name="qr_status_connected">Connected. Confirm the code to continue.</string>
+    <string name="qr_status_peer_left">The other device disconnected.</string>
+    <string name="qr_status_failed">Couldn\'t connect: %1$s</string>
+    <string name="qr_code_mismatch">That code doesn\'t match — try again.</string>
+    <string name="qr_invalid_code">Enter the 6-digit code.</string>
+    <string name="qr_signaling_not_set">Set your signaling server address first.</string>
+    <string name="qr_signaling_url_hint">wss://your-server.example.com</string>
+    <string name="qr_invalid_qr">That doesn\'t look like a LinkBridge code.</string>
+    <string name="home_option_history_title">Log / History</string>
+    <string name="home_option_history_subtitle">Past connections and file transfers</string>
+    <string name="port_label">Port</string>
+    <string name="port_change_hint">Changing this restarts the server if it\'s running.</string>
+    <string name="connected_devices_header">Connected devices</string>
+    <string name="no_devices_connected">No devices connected yet</string>
+    <string name="invalid_port">Port must be between 1024 and 65535</string>
+    <string name="discovering_devices">Looking for other LinkBridge devices…</string>
+    <string name="no_devices_found">No other LinkBridge devices found on this network</string>
+    <string name="no_app_to_open_file">cannot find any app to open this file</string>
+    <string name="open_with_title">Open file with</string>
+
+    <!-- QR Code related strings -->
+    <string name="show_qr_code">Show QR Code</string>
+    <string name="qr_code_title">Scan to Connect</string>
+    <string name="qr_code_description">Scan this QR code with any device to quickly access the server</string>
+    <string name="qr_code_content_description">QR code for server connection</string>
+    <string name="qr_code_generation_failed">Failed to generate QR code</string>
+    <string name="no_ip_available">No IP address available</string>
+
+
+</resources>

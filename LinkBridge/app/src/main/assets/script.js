@@ -1,0 +1,646 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const filesTableBody = document.querySelector('#files-table tbody');
+    const uploadProgressContainer = document.getElementById('upload-progress-container');
+    const noFilesMessage = document.getElementById('no-files-message');
+    const themeToggleButton = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const pasteButton = document.getElementById('paste-button');
+    const downloadAllZipButton = document.getElementById('download-all-zip-button');
+
+    const selectAllCheckbox = document.getElementById('select-all-checkbox');
+
+    // Device name: the server now identifies this browser by its web-login username
+    // (from the Basic Auth prompt), so there's no separate device-name prompt/header here.
+
+    // --- Chunked/resumable upload settings ---
+    const CHUNK_SIZE = 4 * 1024 * 1024;       // 4MB per chunk
+    const CHUNK_THRESHOLD = 8 * 1024 * 1024;  // only chunk files bigger than this
+    function getUploadId(file) {
+        const key = `linkbridge_upload_id:${file.name}:${file.size}:${file.lastModified}`;
+        let id = localStorage.getItem(key);
+        if (!id) {
+            id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+            localStorage.setItem(key, id);
+        }
+        return id;
+    }
+
+
+
+    // Modal elements
+    const confirmationModalOverlay = document.getElementById('confirmation-modal-overlay');
+    const confirmationModalMessage = document.getElementById('confirmation-modal-message');
+    const modalConfirmButton = document.getElementById('modal-confirm-button');
+    const modalCancelButton = document.getElementById('modal-cancel-button');
+    const doNotAskAgainCheckbox = document.getElementById('do-not-ask-again');
+
+    // --- Theme Toggle ---
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeIcon.textContent = '☀️'; // Sun icon for dark mode (to switch to light)
+        } else {
+            document.body.classList.remove('dark-mode');
+            themeIcon.textContent = '🌙'; // Moon icon for light mode (to switch to dark)
+        }
+    }
+
+    // Load theme preference from localStorage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        // Detect system preference for dark or light mode
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(prefersDark ? 'dark' : 'light');
+    }
+
+    // Toggle theme on button click
+    themeToggleButton.addEventListener('click', () => {
+        const currentTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+        localStorage.setItem('theme', newTheme);
+    });
+
+    // --- Custom Confirmation Modal Logic ---
+    let currentConfirmCallback = null;
+
+    /**
+     * Shows a custom confirmation modal.
+     * @param {string} message The message to display in the modal.
+     * @param {function} onConfirm Callback function to execute if the user confirms.
+     */
+    function showConfirmModal(message, onConfirm) {
+        confirmationModalMessage.textContent = message;
+        currentConfirmCallback = onConfirm; // Store the callback
+        doNotAskAgainCheckbox.checked = false; // Reset checkbox state every time modal is opened
+
+        confirmationModalOverlay.classList.add('active'); // Show modal
+
+        // Ensure previous listeners are removed to prevent multiple calls
+        modalConfirmButton.onclick = null;
+        modalCancelButton.onclick = null;
+
+        modalConfirmButton.onclick = () => {
+            if (doNotAskAgainCheckbox.checked) {
+                localStorage.setItem('doNotAskAgainDelete', 'true'); // Set preference
+            }
+            if (currentConfirmCallback) {
+                currentConfirmCallback(true);
+            }
+            hideConfirmModal();
+        };
+
+        modalCancelButton.onclick = () => {
+            if (currentConfirmCallback) {
+                currentConfirmCallback(false); // Indicate cancellation
+            }
+            hideConfirmModal();
+        };
+
+        // Allow clicking outside to close
+        confirmationModalOverlay.addEventListener('click', (event) => {
+            if (event.target === confirmationModalOverlay) {
+                if (currentConfirmCallback) {
+                    currentConfirmCallback(false); // Indicate cancellation
+                }
+                hideConfirmModal();
+            }
+        }, { once: true }); // Use once to prevent multiple bindings
+    }
+
+    function hideConfirmModal() {
+        confirmationModalOverlay.classList.remove('active');
+        currentConfirmCallback = null; // Clear the callback
+    }
+
+
+    // --- File Listing ---
+    async function fetchFiles() {
+        try {
+            const response = await fetch('/api/files');
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error fetching files:', response.status, errorText);
+                filesTableBody.innerHTML = `<tr><td colspan="5" style="color: var(--error-color);">Error loading files: ${errorText}</td></tr>`;
+                noFilesMessage.style.display = 'none';
+                downloadAllZipButton.style.display = 'none'; // Hide button on error
+                return;
+            }
+            const data = await response.json();
+            renderFiles(data.files);
+        } catch (error) {
+            console.error('Failed to fetch files:', error);
+            filesTableBody.innerHTML = `<tr><td colspan="5" style="color: var(--error-color);">Could not connect to server or error fetching files.</td></tr>`;
+            noFilesMessage.style.display = 'none';
+            downloadAllZipButton.style.display = 'none';
+
+        }
+    }
+
+    function renderFiles(files) {
+        filesTableBody.innerHTML = ''; // Clear existing files
+        // clear selected
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+        updateDownloadButtonLabel();
+
+        if (!files || files.length === 0) {
+            noFilesMessage.style.display = 'block';
+            downloadAllZipButton.style.display = 'none'; // Hide button if no files
+            return;
+        }
+        noFilesMessage.style.display = 'none';
+        downloadAllZipButton.style.display = 'block';
+
+        files.forEach(file => {
+            const row = filesTableBody.insertRow();
+            // Dynamically add data attributes for easy access
+            row.dataset.fileName = file.name;
+
+            // Checkbox:select
+            const checkCell = row.insertCell();
+            checkCell.dataset.label = 'Select';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'file-select';
+            checkbox.dataset.fileName = file.name;
+            checkCell.appendChild(checkbox);
+
+            // Add data-label attributes for responsive CSS
+            const nameCell = row.insertCell();
+            nameCell.textContent = file.name;
+            nameCell.dataset.label = 'Name';
+
+            const sizeCell = row.insertCell();
+            sizeCell.textContent = file.formattedSize || formatBytes(file.size);
+            sizeCell.dataset.label = 'Size';
+
+            const modifiedCell = row.insertCell();
+            modifiedCell.textContent = file.lastModified;
+            modifiedCell.dataset.label = 'Last Modified';
+
+            const typeCell = row.insertCell();
+            typeCell.textContent = file.type;
+            typeCell.dataset.label = 'Type';
+
+            // Add the action icons container to the last cell
+            const actionsCell = row.insertCell();
+            actionsCell.dataset.label = 'Actions';
+            actionsCell.style.textAlign = 'right'; // Align icons to the right
+
+            const actionIconsContainer = document.createElement('div');
+            actionIconsContainer.className = 'action-icons-container';
+
+            // Download Icon
+            const downloadLink = document.createElement('a');
+            downloadLink.href = file.downloadUrl;
+            downloadLink.setAttribute('download', file.name); // Suggest filename for download
+            downloadLink.className = 'icon-button download-icon';
+            downloadLink.title = `Download ${file.name}`;
+            downloadLink.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 16L7 11H11V4H13V11H17L12 16ZM20 18H4V20H20V18Z"/>
+                    </svg>
+                `;
+            actionIconsContainer.appendChild(downloadLink);
+
+            // Delete Icon
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'icon-button delete-icon';
+            deleteButton.title = `Delete ${file.name}`;
+            deleteButton.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12ZM19 4h-3.5l-1-1h-5l-1 1H5V6h14V4Z"/>
+                    </svg>
+                `;
+            deleteButton.onclick = (event) => {
+                event.stopPropagation(); // Prevent row click from interfering if any
+                confirmDeleteFile(file.name);
+            };
+            actionIconsContainer.appendChild(deleteButton);
+
+            actionsCell.appendChild(actionIconsContainer);
+        });
+    }
+
+    function confirmDeleteFile(fileName) {
+        // Check localStorage preference first
+        const doNotAskAgain = localStorage.getItem('doNotAskAgainDelete') === 'true';
+
+        if (doNotAskAgain) {
+            deleteFile(fileName); // Proceed directly if preference is set
+        } else {
+            showConfirmModal(`Delete "${fileName}"?`, (confirmed) => { // Shorter message
+                if (confirmed) {
+                    deleteFile(fileName);
+                }
+            });
+        }
+    }
+    function showError(err) {
+        const errorMsg = document.createElement('p');
+        errorMsg.textContent = err;
+        errorMsg.style.color = 'var(--error-color)';
+        errorMsg.style.marginTop = '10px';
+        errorMsg.style.textAlign = 'center';
+        uploadProgressContainer.appendChild(errorMsg); // Temporary display area
+        setTimeout(() => errorMsg.remove(), 5000); // Remove after 5 seconds
+
+    }
+
+    async function deleteFile(fileName) {
+        try {
+            const response = await fetch('/api/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ filename: fileName })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                // Update the specific row
+                const deletedRow = filesTableBody.querySelector(`[data-file-name="${fileName}"]`);
+                if (deletedRow) {
+                    deletedRow.remove();
+                }
+                if (filesTableBody.children.length === 0) {
+                    noFilesMessage.style.display = 'block';
+                    downloadAllZipButton.style.display = 'none';
+                }
+                updateDownloadButtonLabel()
+                // Optionally show a temporary success message
+                console.log(`Successfully deleted: ${fileName}`);
+            } else {
+                // Using a custom message display instead of alert
+                console.error(`Error deleting file: ${result.error || 'Unknown error'}`);
+
+                showError(
+                    `Failed to delete ${fileName}: ${result.error || 'Unknown error'}`
+                )
+
+            }
+        } catch (error) {
+            console.error('Failed to send delete request:', error);
+            showError(
+                `Failed to send delete request for "${fileName}". Please check network.`
+            )
+        }
+    }
+
+
+    // --- Drag and Drop & File Upload ---
+    dropZone.addEventListener('click', (event) => {
+        if (event.target !== fileInput) { // only click if the click only fall under the dropzone
+            event.stopPropagation();
+            fileInput.click()
+        }
+    }
+    );
+
+    dropZone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.classList.remove('dragover');
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            // validate there are no folders.
+            if (!([...event.dataTransfer.items].every(item => item.webkitGetAsEntry()?.isFile))) {
+                showError("Folders aren't supported. Compress them as ZIP first.");
+                return
+            }
+
+            handleFiles(files);
+        }
+    });
+
+    fileInput.addEventListener('change', (event) => {
+        const files = event.target.files;
+        if (files.length > 0) {
+            handleFiles(files);
+        }
+        // Clear the file input so the same file can be selected again
+        event.target.value = '';
+    });
+
+    function createProgressItem(labelText) {
+        const progressItem = document.createElement('div');
+        progressItem.className = 'progress-bar-item';
+        const fileNameSpan = document.createElement('span');
+        fileNameSpan.textContent = labelText;
+        const progressBar = document.createElement('div');
+        progressBar.className = 'progress-bar';
+        const progressBarFill = document.createElement('div');
+        progressBarFill.className = 'progress-bar-fill';
+        const progressStatus = document.createElement('span');
+        progressStatus.className = 'progress-bar-status';
+
+        progressBar.appendChild(progressBarFill);
+        progressItem.appendChild(fileNameSpan);
+        progressItem.appendChild(progressBar);
+        progressItem.appendChild(progressStatus);
+        uploadProgressContainer.prepend(progressItem);
+        return { progressItem, fileNameSpan, progressBarFill, progressStatus };
+    }
+
+    async function handleFiles(files) {
+        const fileArray = Array.from(files);
+        if (fileArray.length === 0) return;
+
+        const waiting = createProgressItem(
+            `Requesting approval for ${fileArray.length} file(s)…`
+        );
+
+        let result;
+        try {
+            const response = await fetch('/api/transfer-request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    files: fileArray.map(f => ({ name: f.name, size: f.size }))
+                })
+            });
+            result = await response.json();
+        } catch (err) {
+            console.error('Transfer request failed:', err);
+            waiting.progressStatus.textContent = 'Network error';
+            waiting.progressBarFill.style.backgroundColor = 'var(--error-color)';
+            return;
+        }
+
+        waiting.progressItem.remove();
+
+        if (!result.approved) {
+            showError('The receiving device declined the transfer (or it timed out).');
+            return;
+        }
+
+        fileArray.forEach(file => {
+            if (file.size > CHUNK_THRESHOLD) {
+                uploadFileChunked(file, result.token);
+            } else {
+                uploadFile(file, result.token);
+            }
+        });
+    }
+
+    function uploadFile(file, transferToken) {
+        const formData = new FormData();
+        formData.append('file', file, file.name);
+
+        const xhr = new XMLHttpRequest();
+        const { progressItem, progressBarFill, progressStatus } =
+            createProgressItem(`${file.name} (${formatBytes(file.size)}): `);
+
+        let lastLoaded = 0;
+        let lastTime = Date.now();
+
+        xhr.upload.addEventListener('progress', (event) => {
+            if (!event.lengthComputable) return;
+            const percentComplete = (event.loaded / event.total) * 100;
+            progressBarFill.style.width = percentComplete.toFixed(2) + '%';
+
+            const now = Date.now();
+            const elapsedSec = (now - lastTime) / 1000;
+            if (elapsedSec > 0.2) {
+                const bytesPerSec = (event.loaded - lastLoaded) / elapsedSec;
+                progressStatus.textContent =
+                    `${percentComplete.toFixed(0)}% · ${formatBytes(bytesPerSec)}/s`;
+                lastLoaded = event.loaded;
+                lastTime = now;
+            }
+        });
+
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                progressBarFill.style.backgroundColor = 'var(--success-color)';
+                progressStatus.textContent = `Success: ${xhr.responseText}`;
+                setTimeout(() => progressItem.remove(), 3000); // Remove success item after 3 seconds
+                fetchFiles(); // Refresh file list after successful upload
+            } else {
+                progressBarFill.style.backgroundColor = 'var(--error-color)';
+                progressStatus.textContent = `Error: ${xhr.status} - ${xhr.responseText || 'Upload failed'}`;
+                console.error('Upload failed:', xhr.status, xhr.responseText);
+                // Keep error message visible or provide a clear indication
+            }
+        });
+
+        xhr.addEventListener('error', () => {
+            progressBarFill.style.backgroundColor = 'var(--error-color)';
+            progressStatus.textContent = 'Network Error';
+            console.error('Upload error (network).');
+        });
+
+        xhr.open('POST', '/api/upload', true);
+        if (transferToken) xhr.setRequestHeader('X-Transfer-Token', transferToken);
+        xhr.send(formData);
+    }
+
+    /**
+     * Uploads a large file in fixed-size chunks. If the connection drops partway
+     * through, re-selecting the same file (same name/size/lastModified) picks up
+     * from the last chunk the server confirmed receiving, instead of starting over.
+     */
+    async function uploadFileChunked(file, transferToken) {
+        const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+        const uploadId = getUploadId(file);
+        const { progressItem, progressBarFill, progressStatus } =
+            createProgressItem(`${file.name} (${formatBytes(file.size)}): `);
+
+        let receivedSet = new Set();
+        try {
+            const statusResp = await fetch(
+                `/api/upload-status?uploadId=${encodeURIComponent(uploadId)}`
+            );
+            const statusData = await statusResp.json();
+            receivedSet = new Set(statusData.receivedChunks || []);
+        } catch (err) {
+            console.warn('Could not check upload status, starting from the first chunk:', err);
+        }
+
+        let lastLoaded = receivedSet.size * CHUNK_SIZE;
+        let lastTime = Date.now();
+        const updateProgress = (bytesDone) => {
+            const percent = Math.min(100, (bytesDone / file.size) * 100);
+            progressBarFill.style.width = percent.toFixed(2) + '%';
+            const now = Date.now();
+            const elapsedSec = (now - lastTime) / 1000;
+            if (elapsedSec > 0.2) {
+                const bytesPerSec = Math.max(0, (bytesDone - lastLoaded) / elapsedSec);
+                progressStatus.textContent = `${percent.toFixed(0)}% · ${formatBytes(bytesPerSec)}/s`;
+                lastLoaded = bytesDone;
+                lastTime = now;
+            }
+        };
+        updateProgress(lastLoaded);
+
+        try {
+            for (let i = 0; i < totalChunks; i++) {
+                if (receivedSet.has(i)) continue; // already on the server - resume past it
+
+                const start = i * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, file.size);
+                const chunkBlob = file.slice(start, end);
+
+                let success = false;
+                for (let attempt = 1; attempt <= 3 && !success; attempt++) {
+                    try {
+                        const resp = await fetch('/api/upload-chunk', {
+                            method: 'POST',
+                            headers: {
+                                'X-Upload-Id': uploadId,
+                                'X-Chunk-Index': String(i),
+                                'X-Transfer-Token': transferToken,
+                                'Content-Type': 'application/octet-stream'
+                            },
+                            body: chunkBlob
+                        });
+                        success = resp.ok;
+                    } catch (err) {
+                        console.warn(`Chunk ${i} attempt ${attempt} failed:`, err);
+                    }
+                }
+                if (!success) {
+                    throw new Error(`Chunk ${i + 1}/${totalChunks} failed after 3 attempts`);
+                }
+                updateProgress(end);
+            }
+
+            const completeResp = await fetch('/api/upload-complete', {
+                method: 'POST',
+                headers: {
+                    'X-Upload-Id': uploadId,
+                    'X-File-Name': file.name,
+                    'X-Total-Chunks': String(totalChunks),
+                    'X-Transfer-Token': transferToken
+                }
+            });
+            if (!completeResp.ok) {
+                throw new Error(`Server could not assemble the file (${completeResp.status})`);
+            }
+
+            progressBarFill.style.backgroundColor = 'var(--success-color)';
+            progressStatus.textContent = 'Success';
+            setTimeout(() => progressItem.remove(), 3000);
+            fetchFiles();
+        } catch (err) {
+            console.error('Chunked upload failed:', err);
+            progressBarFill.style.backgroundColor = 'var(--error-color)';
+            progressStatus.textContent = 'Paused - reselect this file to resume';
+        }
+    }
+
+    /**
+     * Formats bytes into a human-readable string (e.g., 1.23 MB).
+     * @param {number} bytes The number of bytes.
+     * @param {number} decimals The number of decimal places for the output.
+     * @returns {string} Formatted size string.
+     * This is, of course, GPT. If you said you have more than 1TB, I won't believe you, and YB is a trillion TB. :)
+     */
+    function formatBytes(bytes, decimals = 2) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const dm = decimals < 0 ? 0 : decimals;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    }
+
+    pasteButton.addEventListener('click', async () => {
+        try {
+            const text = await navigator.clipboard.readText();
+            if (text.length > 0) {
+                // Determine the next available filename
+                let pasteIndex = 1;
+                let fileName = `paste_${pasteIndex}.txt`;
+                const existingFiles = Array.from(filesTableBody.querySelectorAll('[data-file-name]'))
+                    .map(row => row.dataset.fileName);
+
+                while (existingFiles.includes(fileName)) {
+                    pasteIndex++;
+                    fileName = `paste_${pasteIndex}.txt`;
+                }
+
+                const blob = new Blob([text], { type: 'text/plain' });
+                const file = new File([blob], fileName, { type: 'text/plain', lastModified: new Date().getTime() });
+                uploadFile(file, fileName); // Use the uploadFile function
+            } else {
+                showError('Clipboard is empty or contains no text.', 'info');
+            }
+        } catch (err) {
+            console.error('Failed to read clipboard contents: ', err);
+            showError('Failed to read clipboard. Please grant clipboard permissions.', 'error');
+        }
+    });
+    function updateDownloadButtonLabel() {
+        const all = filesTableBody.querySelectorAll('.file-select');
+        const checkedCount = filesTableBody.querySelectorAll('.file-select:checked').length;
+
+        downloadAllZipButton.textContent = (checkedCount === 0 || checkedCount === all.length)
+            ? 'Download All as Zip'
+            : `Download Selected (${checkedCount})`;
+
+    }
+
+    // select files
+    selectAllCheckbox.addEventListener('change', () => {
+        const all = filesTableBody.querySelectorAll('.file-select');
+        all.forEach(cb => cb.checked = selectAllCheckbox.checked);
+        updateDownloadButtonLabel();
+    });
+    filesTableBody.addEventListener('change', (e) => {
+        if (!e.target.classList.contains('file-select')) return;
+
+        const all = filesTableBody.querySelectorAll('.file-select');
+        const checked = filesTableBody.querySelectorAll('.file-select:checked');
+
+        selectAllCheckbox.checked = (all.length === checked.length);
+        selectAllCheckbox.indeterminate =
+            checked.length > 0 && checked.length < all.length;
+
+        updateDownloadButtonLabel();
+    });
+    const downloadZip = (files) => {
+        //this is a workaround to make the user download when the request start
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/api/zip';
+        form.style.display = 'none';
+
+        files.forEach(file => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'f';
+            input.value = file;
+            form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    };
+
+    downloadAllZipButton.addEventListener("click", () => {
+        const selectedCheckboxes = filesTableBody.querySelectorAll(
+            ".file-select:checked",
+        );
+        const files = [...selectedCheckboxes].map(cb => cb.dataset.fileName)
+        downloadZip(files)
+
+    });
+
+    // Initial load of files when the page is ready
+    fetchFiles();
+});

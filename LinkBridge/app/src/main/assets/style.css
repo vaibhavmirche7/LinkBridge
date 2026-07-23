@@ -1,0 +1,634 @@
+/* Base styles and light mode variables */
+:root {
+    --app-background: #F5F5F5;
+    --card-background: #FFFFFF;
+    --primary-color: #1976D2;
+    --primary-gradient-start: #1976D2;
+    --primary-gradient-end: #26A69A;
+    /* Cyan accent */
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --button-background: #E3F2FD;
+    /* Light blue */
+    --button-text: #1976D2;
+    --white: #FFFFFF;
+    /* Ensures header text is white in light mode */
+    --divider-color: #E0E0E0;
+    --success-color: #4CAF50;
+    --error-color: #F44336;
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode variables - updated to resemble app's themes.xml/colors.xml */
+body.dark-mode {
+    --app-background: #121212;
+    --card-background: #1E1E1E;
+    --primary-color: #42A5F5;
+    /* Keeping a lighter primary for dark mode header for contrast */
+    --primary-gradient-start: #42A5F5;
+    --primary-gradient-end: #80CBC4;
+    --text-primary: #E0E0E0;
+    --text-secondary: #BDBDBD;
+    /* Updated from #B0B0B0 to #BDBDBD */
+    --button-background: #1E3A5F;
+    /* Updated from #2C3E50 to #1E3A5F */
+    --button-text: #90CAF9;
+    /* Updated from #BBDEFB to #90CAF9 */
+    --white: #FFFFFF;
+    /* Fixed: ensures header text is white on dark gradient */
+    --divider-color: #424242;
+    --success-color: #66BB6A;
+    /* Updated from #4CAF50 to #66BB6A */
+    --error-color: #EF5350;
+    /* Updated from #F44336 to #EF5350 */
+    --shadow-light: rgba(255, 255, 255, 0.05);
+    --shadow-medium: rgba(255, 255, 255, 0.1);
+}
+
+/* General styles */
+body {
+    font-family: 'Inter', sans-serif;
+    /* Prefer Inter, fallback to sans-serif */
+    margin: 0;
+    padding: 0;
+    background-color: var(--app-background);
+    color: var(--text-primary);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header {
+    /* Updated gradient angle to 45deg to match app's taskbar */
+    background: linear-gradient(45deg, var(--primary-gradient-start), var(--primary-gradient-end));
+    color: var(--white);
+    /* Ensures text is white in both themes for contrast with gradient */
+    padding: 1.5rem 1rem;
+    text-align: center;
+    box-shadow: 0 2px 4px var(--shadow-medium);
+    position: relative;
+    /* For theme toggle button */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+header p {
+    margin: 0.5rem 0 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.theme-toggle-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+main {
+    flex: 1;
+    /* Adjusted max-width for more horizontal space */
+    max-width: 1200px;
+    /* Increased from 900px */
+    margin: 2rem auto;
+    padding: 0 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+section {
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    margin-bottom: 2rem;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.6rem;
+    border-bottom: 2px solid var(--divider-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Drop Zone */
+#drop-zone {
+    border: 2px dashed var(--divider-color);
+    border-radius: 10px;
+    padding: 3rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    /* For file input positioning */
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+#drop-zone.dragover {
+    border-color: var(--primary-color);
+    /* Using rgba with fallback for primary-color-rgb */
+    background-color: rgba(25, 118, 210, 0.05);
+    /* Fallback for primary-color-rgb */
+}
+
+#drop-zone input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* General Button Style (used for modal and theme toggle) */
+button {
+    background-color: var(--button-background);
+    color: var(--button-text);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+button:hover {
+    background-color: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-medium);
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--divider-color);
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+#files-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    table-layout: fixed;
+    /* Ensures columns respect widths */
+}
+
+#files-table th,
+#files-table td {
+    text-align: left;
+    padding: 10px 15px;
+    /* Reduced padding for compactness */
+    border-bottom: 1px solid var(--divider-color);
+    /* Ensure text doesn't wrap and shows ellipsis if too long */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Optimized column widths for a more spacious and readable table */
+/* 1:checkbox */
+#files-table th:nth-child(1),
+#files-table td:nth-child(1) {
+    width: 1%;
+}
+
+
+#files-table th:nth-child(2),
+#files-table td:nth-child(2) {
+    width: 30%;
+}
+
+/* Name */
+#files-table th:nth-child(3),
+#files-table td:nth-child(3) {
+    width: 12%;
+}
+
+/* Size */
+#files-table th:nth-child(4),
+#files-table td:nth-child(4) {
+    width: 23%;
+}
+
+/* Last Modified */
+#files-table th:nth-child(5),
+#files-table td:nth-child(5) {
+    width: 20%;
+}
+
+/* Type */
+#files-table th:nth-child(6),
+#files-table td:nth-child(6) {
+    width: 15%;
+    text-align: right;
+}
+
+/* Actions */
+
+
+#files-table thead th {
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+#files-table tbody tr:nth-child(even) {
+    /* Using rgba with fallback for primary-color-rgb */
+    background-color: rgba(25, 118, 210, 0.03);
+    /* Fallback for primary-color-rgb */
+}
+
+#files-table tbody tr:hover {
+    /* Using rgba with fallback for primary-color-rgb */
+    background-color: rgba(25, 118, 210, 0.1);
+    /* Stronger tint on hover */
+}
+
+#no-files-message {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border: 1px dashed var(--divider-color);
+    border-radius: 8px;
+    background-color: var(--card-background);
+}
+
+/* Action Icons (visible always) */
+.action-icons-container {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    /* Align icons to the right within the cell */
+    width: 100%;
+    /* Ensure container takes full width */
+}
+
+.icon-button {
+    background: none;
+    /* No background by default */
+    border: 1px solid transparent;
+    /* Transparent border for subtle hover effect */
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, color 0.2s ease;
+    color: var(--text-secondary);
+    /* Default icon color */
+    text-decoration: none;
+    /* For download links */
+}
+
+.icon-button:hover {
+    background-color: var(--button-background);
+    /* Subtle background on hover */
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.delete-button{
+background-color: var(--error-color);
+}
+
+.download-icon:hover {
+    color: var(--primary-color);
+    /* Download icon becomes primary color on hover */
+}
+
+.delete-icon:hover {
+    color: var(--error-color);
+    /* Delete icon becomes red on hover */
+    border-color: var(--error-color);
+}
+.header-container {
+    display: flex; /* Enable Flexbox */
+    justify-content: space-between; /* Puts space between the h2 and the button div */
+    align-items: center; /* Vertically aligns items in the middle */
+    margin-bottom: 1rem; /* Maintains the spacing below the header */
+    padding: 0 15px; /* Add some padding to the sides */
+}
+
+#files-actions {
+    /* Remove inline styles here, flexbox handles alignment */
+    margin-bottom: 0; /* Reset margin if inherited from elsewhere */
+}
+
+/* Styling for the Download All as Zip button */
+#download-all-zip-button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px var(--shadow-light);
+    white-space: nowrap; /* Prevent button text from wrapping */
+}
+
+#download-all-zip-button:hover {
+    background-color: var(--primary-gradient-end);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px var(--shadow-medium);
+}
+
+
+
+/* SVG icon styling */
+.icon-button svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    /* Inherit color from parent button */
+    stroke: currentColor;
+    /* For icons that use stroke */
+    stroke-width: 1.5;
+    /* Default stroke width for icons */
+    vertical-align: middle;
+    /* Align icons nicely with text if any */
+}
+
+
+/* Upload Progress */
+#upload-progress-container {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.progress-bar-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.progress-bar-item span:first-child {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: var(--divider-color);
+    border-radius: 5px;
+    overflow: hidden;
+    height: 10px;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    transition: width 0.4s ease-in-out, background-color 0.3s ease;
+}
+
+.progress-bar-status {
+    text-align: right;
+    font-weight: 500;
+    margin-top: 0.2rem;
+    color: var(--text-secondary);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--divider-color);
+    margin-top: 2rem;
+    background-color: var(--card-background);
+    box-shadow: 0 -2px 4px var(--shadow-light);
+}
+
+/* Custom Modal for Confirmation */
+.modal-overlay {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    /* For fade-in effect */
+}
+
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    /* Reduced padding */
+    border-radius: 12px;
+    box-shadow: 0 8px 20px var(--shadow-medium);
+    max-width: 350px;
+    /* Reduced max-width for a more compact modal */
+    width: 90%;
+    text-align: center;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-content p {
+    font-size: 1rem;
+    /* Slightly reduced font size */
+    margin-bottom: 1rem;
+    /* Reduced margin */
+    color: var(--text-primary);
+}
+
+.modal-checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    /* Space before buttons */
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.modal-checkbox-container input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    /* Standardize checkbox size */
+    height: 18px;
+    accent-color: var(--primary-color);
+    /* Native checkbox color */
+}
+
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    main {
+        margin: 1.5rem auto;
+        padding: 0 0.8rem;
+    }
+
+    section {
+        padding: 1rem;
+    }
+
+    h2 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    #drop-zone {
+        padding: 2rem 1rem;
+        font-size: 1rem;
+    }
+
+    .icon-button {
+        padding: 0.4rem;
+        /* Smaller icons on mobile */
+    }
+
+    .icon-button svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    /*
+      Mobile Table Redesign
+      - Hides the header and transforms rows into cards for better mobile usability.
+    */
+    .table-container {
+        border: none;
+        box-shadow: none;
+    }
+
+    #files-table {
+        table-layout: auto; /* Reset table layout */
+    }
+
+    /* Hide table headers visually, but keep them for screen readers */
+    #files-table thead {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+
+    #files-table tr {
+        display: block;
+        border: 1px solid var(--divider-color);
+        border-radius: 8px; /* Makes each row a "card" */
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px var(--shadow-light);
+        background-color: var(--card-background); /* Ensure cards have a background */
+    }
+
+    #files-table tbody tr {
+        background-color: var(--card-background);
+    }
+
+    #files-table td {
+        display: block;
+        text-align: right; /* Align cell content (the value) */
+        font-size: 0.9rem;
+        padding: 12px 15px 12px 50%; /* Top, Right, Bottom, Left padding */
+        position: relative;
+        white-space: nowrap; /* Allow text to wrap */
+        text-overflow: ellipsis;
+        border-bottom: 1px solid var(--divider-color);
+    }
+
+    #files-table td:last-child {
+        border-bottom: none; /* No border for the last cell in a card */
+    }
+
+    /* Use the data-label attribute to create a pseudo-header */
+    #files-table td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: 600;
+        color: var(--primary-color); /* Make labels stand out */
+    }
+
+    /* Ensure the actions container aligns correctly within the new layout */
+    #files-table td .action-icons-container {
+        justify-content: flex-end; /* Aligns buttons to the right */
+        padding: 0;
+    }
+
+    /* set widths for phone view */
+    #files-table th:nth-child(n),
+    #files-table td:nth-child(n) {
+        width: auto;
+        max-width: 60vw; /* Prevents overflow on phones */
+    }
+}
+

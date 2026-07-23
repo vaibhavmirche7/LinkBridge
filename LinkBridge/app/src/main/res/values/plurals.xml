@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="transfer_request_file_count">
+        <item quantity="one">Wants to send %d file</item>
+        <item quantity="other">Wants to send %d files</item>
+    </plurals>
+</resources>

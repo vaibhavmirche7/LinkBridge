@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/app_name"
+            app:titleTextColor="@color/white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- 1: QR Transfer -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardQrTransfer"
+            style="@style/HomeOptionCard">
+            <LinearLayout style="@style/HomeOptionRow">
+                <ImageView style="@style/HomeOptionIcon" android:src="@drawable/ic_qr_code" android:contentDescription="@null"/>
+                <LinearLayout style="@style/HomeOptionTextStack">
+                    <TextView style="@style/HomeOptionTitle" android:text="@string/home_option_qr_title"/>
+                    <TextView style="@style/HomeOptionSubtitle" android:text="@string/home_option_qr_subtitle"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 2: LAN / Hotspot Transfer -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardLanTransfer"
+            style="@style/HomeOptionCard">
+            <LinearLayout style="@style/HomeOptionRow">
+                <ImageView style="@style/HomeOptionIcon" android:src="@drawable/ic_wifi" android:contentDescription="@null"/>
+                <LinearLayout style="@style/HomeOptionTextStack">
+                    <TextView style="@style/HomeOptionTitle" android:text="@string/home_option_lan_title"/>
+                    <TextView style="@style/HomeOptionSubtitle" android:text="@string/home_option_lan_subtitle"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 3: Server Mode (coming soon, inert) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardServerMode"
+            style="@style/HomeOptionCard"
+            app:cardBackgroundColor="?attr/colorSurface"
+            android:alpha="0.6">
+            <LinearLayout style="@style/HomeOptionRow">
+                <ImageView style="@style/HomeOptionIcon" android:src="@drawable/ic_hub" android:contentDescription="@null"/>
+                <LinearLayout style="@style/HomeOptionTextStack">
+                    <TextView style="@style/HomeOptionTitle" android:text="@string/home_option_server_title"/>
+                    <TextView style="@style/HomeOptionSubtitle" android:text="@string/coming_soon"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 4: Log / History -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardHistory"
+            style="@style/HomeOptionCard">
+            <LinearLayout style="@style/HomeOptionRow">
+                <ImageView style="@style/HomeOptionIcon" android:src="@drawable/ic_history" android:contentDescription="@null"/>
+                <LinearLayout style="@style/HomeOptionTextStack">
+                    <TextView style="@style/HomeOptionTitle" android:text="@string/home_option_history_title"/>
+                    <TextView style="@style/HomeOptionSubtitle" android:text="@string/home_option_history_subtitle"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

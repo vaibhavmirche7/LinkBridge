@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/home_option_qr_title"
+            app:titleTextColor="@color/white"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIconTint="@color/white"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:gravity="center_horizontal">
+
+            <!-- 1. Chooser: Scan or Show -->
+            <LinearLayout
+                android:id="@+id/chooserBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/qr_chooser_hint"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginBottom="20dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScan"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/qr_scan"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_qr_code"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShow"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/qr_show"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_qr_code"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    app:cornerRadius="12dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnNearby"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/qr_find_nearby"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_wifi"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:cornerRadius="12dp"/>
+            </LinearLayout>
+
+            <!-- 2. Show mode: the QR itself + the 6-digit code, visible only on this device -->
+            <LinearLayout
+                android:id="@+id/showBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/ivQrCode"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:contentDescription="@null"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/qr_confirmation_code_label"
+                    android:textSize="13sp"
+                    android:textColor="?android:attr/textColorSecondary"/>
+
+                <TextView
+                    android:id="@+id/tvMyCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="34sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.2"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- 3. Shared connection status (both roles) -->
+            <LinearLayout
+                android:id="@+id/statusBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/progressStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:gravity="center"/>
+            </LinearLayout>
+
+            <!-- 4. Scanner side: type in the code shown on the other device -->
+            <LinearLayout
+                android:id="@+id/verifyEntryBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/qr_enter_code_hint"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCodeEntry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="6"
+                        android:gravity="center"
+                        android:textSize="24sp"
+                        android:letterSpacing="0.3"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVerifyCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/qr_verify_code"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="12dp"/>
+            </LinearLayout>
+
+            <!-- 5. Connected + verified: pick a file to send, or watch an incoming one -->
+            <LinearLayout
+                android:id="@+id/transferBlock"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/qr_connected_verified"
+                    android:textSize="15sp"
+                    android:gravity="center"
+                    android:layout_marginBottom="16dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:text="@string/qr_send_a_file"
+                    android:textAllCaps="false"
+                    app:cornerRadius="12dp"/>
+
+                <TextView
+                    android:id="@+id/tvTransferName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:visibility="gone"/>
+
+                <ProgressBar
+                    android:id="@+id/progressTransfer"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:max="100"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tvTransferStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginTop="4dp"
+                    android:visibility="gone"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

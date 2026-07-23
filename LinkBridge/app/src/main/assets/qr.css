@@ -1,0 +1,83 @@
+.qr-block {
+    text-align: center;
+    padding: 24px 16px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--primary-color, #1976D2);
+}
+
+#qrcode-canvas {
+    display: inline-block;
+    padding: 12px;
+    background: #fff;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.code-label {
+    font-size: 13px;
+    color: var(--text-secondary-color, #666);
+    margin-bottom: 4px;
+}
+
+.code-value {
+    font-size: 34px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin: 0;
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--primary-color, #1976D2);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: qr-spin 0.9s linear infinite;
+}
+
+@keyframes qr-spin {
+    to { transform: rotate(360deg); }
+}
+
+#signaling-url-input {
+    display: block;
+    margin: 12px auto;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 80%;
+    max-width: 320px;
+    text-align: center;
+}
+
+.progress-row {
+    text-align: left;
+    margin-top: 12px;
+}
+
+.progress-label {
+    font-size: 13px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.progress-track {
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--primary-color, #1976D2);
+    transition: width 0.2s ease;
+}

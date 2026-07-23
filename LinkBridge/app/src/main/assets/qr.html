@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkBridge - Cross-network Transfer</title>
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="/assets/qr.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>Cross-network Transfer</h1>
+            <a href="/assets/index.html" class="back-link">&larr; Back to file browser</a>
+        </header>
+
+        <main>
+            <!-- 0. Signaling server not configured yet -->
+            <section id="setup-block" class="qr-block">
+                <p>Enter the signaling server address (the same one configured on the phone
+                   showing/scanning this session). This only needs to be set once per browser.</p>
+                <input id="signaling-url-input" type="text" placeholder="wss://your-server.example.com" />
+                <button id="btn-save-signaling" class="btn-primary">Save & continue</button>
+            </section>
+
+            <!-- 1. Showing the QR + confirmation code -->
+            <section id="show-block" class="qr-block" style="display:none;">
+                <div id="qrcode-canvas"></div>
+                <p class="code-label">Confirmation code (tell the other person)</p>
+                <p id="my-code" class="code-value"></p>
+            </section>
+
+            <!-- 2. Connection status -->
+            <section id="status-block" class="qr-block" style="display:none;">
+                <div class="spinner"></div>
+                <p id="status-text"></p>
+            </section>
+
+            <!-- 3. Waiting for the other side to confirm the code -->
+            <section id="verify-wait-block" class="qr-block" style="display:none;">
+                <p>Connected. Waiting for the other device to confirm the code above.</p>
+            </section>
+
+            <!-- 4. Connected + verified: send/receive files -->
+            <section id="transfer-block" class="qr-block" style="display:none;">
+                <p>Connected and verified. You can send a file directly to the other device.</p>
+                <input id="file-input" type="file" style="display:none;" />
+                <button id="btn-pick-file" class="btn-primary">Send a file</button>
+                <div id="transfer-progress-container"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="/assets/qr.js"></script>
+</body>
+</html>
