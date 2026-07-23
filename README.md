@@ -6,7 +6,7 @@ A local file-sharing app for Android. Send and receive files between devices ove
 
  * Download Link --> https://drive.google.com/file/d/15k4Got25CZYI_zs8hZSnbhLVxW-EK44i
 
- * Set the LinkBridge signaling server to 'wss://linkbridge-server.onrender.com/pair' before starting transfer.
+ * **Signaling server**: Set this to `wss://linkbridge-server.onrender.com/pair`.
 
 ## The problem it solves
 
