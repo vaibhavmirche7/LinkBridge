@@ -2,6 +2,11 @@
 
 A local file-sharing app for Android. Send and receive files between devices over Wi-Fi or a hotspot or devive to device, mobile to laptop/PC no cables at all.
 
+## Getting the app
+
+ * Download Link --> https://drive.google.com/file/d/15k4Got25CZYI_zs8hZSnbhLVxW-EK44i
+
+ * Set the LinkBridge signaling server to 'wss://linkbridge-server.onrender.com/pair' before starting transfer.
 
 ## The problem it solves
 
@@ -29,12 +34,6 @@ LinkBridge skips all of that. Open the app, connect, send the file.
   * **Upload** : pull files straight from your phone's storage into the shared folder.
   * **Paste** : drop clipboard text into a new `.txt` file with one tap.
 * **Logs & history** : See who's connected and when (3-dot menu → Logs), plus a full record of every transfer: filename, size, direction, timestamp, mode, device, and status (Home → Log/History).
-
-## Getting the app
-
- * Download Link --> https://drive.google.com/file/d/15k4Got25CZYI_zs8hZSnbhLVxW-EK44i
-
- * Set the LinkBridge signaling server to wss://linkbridge-server.onrender.com/pair before starting transfer.
 
 # Future Implementation
 
