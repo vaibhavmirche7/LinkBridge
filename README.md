@@ -32,7 +32,9 @@ LinkBridge skips all of that. Open the app, connect, send the file.
 
 ## Getting the app
 
-Not yet published to F-Droid or Google Play. Build it from source for now.
+ * Download Link --> https://drive.google.com/file/d/15k4Got25CZYI_zs8hZSnbhLVxW-EK44i
+
+ * Set the LinkBridge signaling server to wss://linkbridge-server.onrender.com/pair before starting transfer.
 
 # Future Implementation
 
